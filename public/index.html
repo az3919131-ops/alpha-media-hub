@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alpha Media Hub</title>
+  <meta name="description" content="منصة Alpha Media لنشر الفيديو: ارفع الفيديو مرة واحدة ويصل تلقائيًا إلى يوتيوب وفيسبوك وإنستاجرام وتيك توك ولينكد إن." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="Alpha Media — الصفحة الرئيسية">
+        <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="9" fill="#101B33"/><path d="M9 25 17 8l8 17h-4.2L17 16.6 13.2 25Z" fill="#fff"/><circle cx="26" cy="9" r="3.2" fill="#E5383B"/></svg>
+        <span>ألفا ميديا<small>Alpha Media Hub</small></span>
+      </a>
+      <nav class="site-nav" aria-label="القائمة الرئيسية">
+        <a href="#latest">أحدث الفيديوهات</a>
+        <a href="#how">طريقة العمل</a>
+        <a class="btn btn-ink btn-sm" href="/dashboard.html">لوحة التحكم</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <p class="live-line"><span class="tally" aria-hidden="true"></span> القناة متصلة ويتم فحصها كل 10 دقائق</p>
+          <h1>ارفع الفيديو مرة واحدة، ويصل إلى كل منصاتك.</h1>
+          <p class="lead">أي فيديو يُنشر على قناة Alpha Media في يوتيوب، أو يُرفع من لوحة التحكم، يُرسل تلقائيًا إلى فيسبوك وإنستاجرام وتيك توك ولينكد إن عبر Zapier أو n8n، ويمكنك إضافة أي منصة أخرى برابط Webhook.</p>
+          <div class="hero-actions">
+            <a class="btn btn-tally" href="/dashboard.html">افتح لوحة التحكم</a>
+            <a class="btn btn-ghost" href="https://youtube.com/@alphamedia-010" target="_blank" rel="noopener">قناة يوتيوب</a>
+          </div>
+        </div>
+
+        <figure class="board" aria-label="مخطط توزيع الفيديو من يوتيوب إلى المنصات">
+          <svg viewBox="0 0 640 400" role="img" aria-hidden="true" style="direction:ltr">
+            <defs>
+              <path id="c1" d="M470 200 C 360 200, 320 65, 210 65" />
+              <path id="c2" d="M470 200 C 360 200, 320 135, 210 135" />
+              <path id="c3" d="M470 200 C 360 200, 320 205, 210 205" />
+              <path id="c4" d="M470 200 C 360 200, 320 275, 210 275" />
+              <path id="c5" d="M470 200 C 360 200, 320 345, 210 345" />
+            </defs>
+            <use href="#c1" class="cable hot" /><use href="#c2" class="cable hot" /><use href="#c3" class="cable hot" /><use href="#c4" class="cable hot" /><use href="#c5" class="cable" stroke-dasharray="5 7" />
+
+            <g class="node-src">
+              <rect x="470" y="140" width="150" height="120" rx="14" />
+              <circle cx="597" cy="162" r="6" fill="#fff" />
+              <text x="604" y="205" text-anchor="end" font-size="20" font-weight="650">يوتيوب</text>
+              <text x="604" y="232" text-anchor="end" font-size="13" opacity=".85">@alphamedia-010</text>
+            </g>
+
+            <g class="node-out">
+              <rect x="20" y="42" width="190" height="46" rx="10" /><circle class="jack" cx="210" cy="65" r="5" /><text x="190" y="71" text-anchor="end">فيسبوك · Alpha Media</text>
+              <rect x="20" y="112" width="190" height="46" rx="10" /><circle class="jack" cx="210" cy="135" r="5" /><text x="190" y="141" text-anchor="end">إنستاجرام</text>
+              <rect x="20" y="182" width="190" height="46" rx="10" /><circle class="jack" cx="210" cy="205" r="5" /><text x="190" y="211" text-anchor="end">تيك توك</text>
+              <rect x="20" y="252" width="190" height="46" rx="10" /><circle class="jack" cx="210" cy="275" r="5" /><text x="190" y="281" text-anchor="end">لينكد إن</text>
+              <rect x="20" y="322" width="190" height="46" rx="10" stroke-dasharray="5 5" fill="none" /><text x="190" y="351" text-anchor="end" opacity=".7">+ منصة بـ Webhook</text>
+            </g>
+
+            <circle class="pulse" r="4.5"><animateMotion dur="1.6s" begin="0.3s" fill="freeze" repeatCount="3"><mpath href="#c1" /></animateMotion></circle>
+            <circle class="pulse" r="4.5"><animateMotion dur="1.6s" begin="0.45s" fill="freeze" repeatCount="3"><mpath href="#c2" /></animateMotion></circle>
+            <circle class="pulse" r="4.5"><animateMotion dur="1.6s" begin="0.6s" fill="freeze" repeatCount="3"><mpath href="#c3" /></animateMotion></circle>
+            <circle class="pulse" r="4.5"><animateMotion dur="1.6s" begin="0.75s" fill="freeze" repeatCount="3"><mpath href="#c4" /></animateMotion></circle>
+          </svg>
+          <figcaption class="board-caption"><span>المصدر: يوتيوب أو رفع مباشر</span><span>Zapier · n8n · Webhook</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="latest">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>أحدث ما نُشر على القناة</h2>
+            <p>تُسحب هذه الفيديوهات مباشرة من يوتيوب، وكل فيديو جديد يُوزَّع على المنصات المفعّلة.</p>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="https://youtube.com/@alphamedia-010" target="_blank" rel="noopener">كل الفيديوهات على يوتيوب</a>
+        </div>
+        <div class="vgrid" id="videos">
+          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="wrap">
+        <div class="section-head"><h2>كيف يصل الفيديو إلى كل مكان</h2></div>
+        <ol class="steps">
+          <li><h3>انشر أو ارفع</h3><p>ارفع الفيديو على قناتك في يوتيوب كالمعتاد، أو ارفعه من لوحة التحكم ليُنشر على القناة مباشرة.</p></li>
+          <li><h3>المنصة تلتقطه</h3><p>كل 10 دقائق تُفحص القناة. أي فيديو جديد يظهر في لوحة التحكم ويُجهَّز للنشر مع الوصف والوسوم.</p></li>
+          <li><h3>التوزيع التلقائي</h3><p>يُرسل الفيديو إلى Zapier أو n8n أو أي Webhook، فيُنشر على صفحاتك في فيسبوك وإنستاجرام وتيك توك ولينكد إن.</p></li>
+        </ol>
+        <div class="strip" aria-label="المنصات المدعومة">
+          <span class="chip"><i></i>Facebook</span><span class="chip"><i></i>Instagram</span><span class="chip"><i></i>TikTok</span><span class="chip"><i></i>LinkedIn</span><span class="chip"><i></i>X</span><span class="chip"><i></i>Zapier</span><span class="chip"><i></i>n8n</span><span class="chip"><i></i>Make</span><span class="chip"><i></i>أي API</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>© <span id="yr"></span> Alpha Media</span>
+      <span class="credit"><span>Project manager</span> Eng Ahmed Zahran</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("yr").textContent = new Date().getFullYear();
+    const box = document.getElementById("videos");
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const fmt = (d) => new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long", year: "numeric" }).format(new Date(d));
+    fetch("/api/videos")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.videos || !d.videos.length) throw new Error(d.error || "empty");
+        box.innerHTML = d.videos.slice(0, 8).map((v) => `
+          <a class="vcard" href="${esc(v.url)}" target="_blank" rel="noopener">
+            <div class="vthumb"><img src="${esc(v.thumbnail)}" alt="" loading="lazy" /></div>
+            <h3>${esc(v.title)}</h3>
+            <div class="vmeta">${fmt(v.publishedAt)}${v.views != null ? ` · ${v.views.toLocaleString("ar-EG")} مشاهدة` : ""}</div>
+          </a>`).join("");
+      })
+      .catch(() => {
+        box.innerHTML = `<div class="empty" style="grid-column:1/-1"><strong>لم تظهر الفيديوهات بعد</strong>افتح <a href="https://youtube.com/@alphamedia-010" target="_blank" rel="noopener">القناة على يوتيوب</a> مباشرة، أو تحقق من معرّف القناة في لوحة التحكم.</div>`;
+      });
+  </script>
+</body>
+</html>
