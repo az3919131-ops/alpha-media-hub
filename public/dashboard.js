@@ -2,7 +2,7 @@
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const fmtDate = (d) => new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(d));
+const fmtDate = (d) => !d || isNaN(new Date(d)) ? "Short" : new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(d));
 
 const KIND_LABEL = { facebook: "فيسبوك", instagram: "إنستاجرام", tiktok: "تيك توك", linkedin: "لينكد إن", x: "X", youtube: "يوتيوب", custom: "منصة أخرى" };
 const ROUTES = [["zapier", "Zapier"], ["n8n", "n8n"], ["make", "Make"], ["webhook", "Webhook / API"]];
@@ -102,7 +102,7 @@ function renderVideos() {
       <div>
         <h3><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title)}</a></h3>
         <div class="vmeta">
-          ${new Date(v.publishedAt).getTime() > dayAgo ? `<span class="badge new">جديد</span>` : ""}
+          ${v.publishedAt && new Date(v.publishedAt).getTime() > dayAgo ? `<span class="badge new">جديد</span>` : ""}
           <span>${fmtDate(v.publishedAt)}</span>
           ${v.views != null ? `<span>${Number(v.views).toLocaleString("ar-EG")} مشاهدة</span>` : ""}
           ${statusFor(v.id)}

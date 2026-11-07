@@ -149,12 +149,89 @@ const tag = (xml: string, name: string) => {
   return m ? decode(m[1].trim()) : "";
 };
 
+const unescapeJson = (s: string) => {
+  try {
+    return JSON.parse(`"${s}"`) as string;
+  } catch {
+    return s;
+  }
+};
+
+// "3 days ago" → approximate ISO date (page is requested in English)
+function relativeToIso(text: string): string {
+  const m = text.match(/(\d+)\s+(second|minute|hour|day|week|month|year)/i);
+  if (!m) return new Date().toISOString();
+  const unit: Record<string, number> = { second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5, month: 2592e6, year: 31536e6 };
+  return new Date(Date.now() - Number(m[1]) * unit[m[2].toLowerCase()]).toISOString();
+}
+
+// Fallback when the RSS feed is unavailable: read the channel's Videos and Shorts tabs.
+async function scrapeChannelPage(channelId: string): Promise<{ channelTitle: string; videos: Video[] }> {
+  const videos: Video[] = [];
+  const seen = new Set<string>();
+  let channelTitle = "";
+  for (const tab of ["videos", "shorts"]) {
+    const res = await fetch(`https://www.youtube.com/channel/${channelId}/${tab}`, {
+      headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36", "accept-language": "en-US,en", cookie: "CONSENT=YES+1" },
+    });
+    if (!res.ok) continue;
+    const html = await res.text();
+    if (!channelTitle) {
+      const t = html.match(/<meta property="og:title" content="([^"]*)"/);
+      channelTitle = t ? decode(t[1]) : "";
+    }
+    // Long-form videos
+    for (const m of html.matchAll(/"videoRenderer":\{"videoId":"([\w-]{11})"/g)) {
+      const id = m[1];
+      if (seen.has(id)) continue;
+      const chunk = html.slice(m.index!, m.index! + 6000);
+      const title = chunk.match(/"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/);
+      const when = chunk.match(/"publishedTimeText":\{"simpleText":"([^"]*)"/);
+      const views = chunk.match(/"viewCountText":\{"simpleText":"([\d,]+)/);
+      const desc = chunk.match(/"descriptionSnippet":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/);
+      seen.add(id);
+      videos.push({
+        id,
+        title: title ? unescapeJson(title[1]) : "فيديو من Alpha Media",
+        url: `https://www.youtube.com/watch?v=${id}`,
+        thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+        description: desc ? unescapeJson(desc[1]) : "",
+        publishedAt: relativeToIso(when ? when[1] : ""),
+        views: views ? Number(views[1].replace(/,/g, "")) : undefined,
+        source: "youtube",
+      });
+    }
+    // Shorts
+    for (const m of html.matchAll(/"reelWatchEndpoint":\{"videoId":"([\w-]{11})"/g)) {
+      const id = m[1];
+      if (seen.has(id)) continue;
+      const before = html.slice(Math.max(0, m.index! - 4000), m.index!);
+      const titles = [...before.matchAll(/"accessibilityText":"((?:[^"\\]|\\.)*)"/g)];
+      const raw = titles.length ? unescapeJson(titles[titles.length - 1][1]) : "";
+      seen.add(id);
+      videos.push({
+        id,
+        title: raw.replace(/,\s*[\d.,KMB]+\s+views.*$/i, "") || "Short من Alpha Media",
+        url: `https://www.youtube.com/shorts/${id}`,
+        thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+        description: "",
+        publishedAt: "",
+        source: "youtube",
+      });
+    }
+  }
+  return { channelTitle, videos: videos.slice(0, 30) };
+}
+
 export async function fetchChannelVideos(cfg: HubConfig): Promise<{ channelId: string; channelTitle: string; videos: Video[] }> {
   const channelId = await resolveChannelId(cfg);
   const res = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, {
     headers: { "user-agent": UA },
   });
-  if (!res.ok) throw new Error(`YouTube feed returned ${res.status}`);
+  if (!res.ok) {
+    const scraped = await scrapeChannelPage(channelId);
+    return { channelId, ...scraped };
+  }
   const xml = await res.text();
   const head = xml.split("<entry>")[0];
   const channelTitle = tag(head, "title");
