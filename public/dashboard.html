@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alpha Media Control</title>
+  <meta name="description" content="لوحة تحكم Alpha Media: رفع الفيديو ونشره على يوتيوب وتوزيعه على كل المنصات." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/dashboard.css" />
+</head>
+<body class="dash">
+
+  <!-- Sign-in -->
+  <section class="gate" id="gate" hidden>
+    <form class="gate-card" id="gateForm">
+      <a class="brand" href="/">
+        <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="9" fill="#101B33"/><path d="M9 25 17 8l8 17h-4.2L17 16.6 13.2 25Z" fill="#fff"/><circle cx="26" cy="9" r="3.2" fill="#E5383B"/></svg>
+        <span>ألفا ميديا<small>لوحة التحكم</small></span>
+      </a>
+      <h1>الدخول إلى لوحة التحكم</h1>
+      <label class="field">
+        <span>رمز الدخول (PIN)</span>
+        <input type="password" id="gateKey" inputmode="numeric" autocomplete="current-password" required />
+      </label>
+      <p class="form-error" id="gateError" role="alert"></p>
+      <button class="btn btn-tally" type="submit">دخول</button>
+      <p class="hint">الرمز هو قيمة <code>ADMIN_PIN</code> في إعدادات الموقع على Netlify، ويُحفظ على هذا الجهاز فقط.</p>
+      <p class="credit gate-credit"><span>Project manager</span> Eng Ahmed Zahran</p>
+    </form>
+  </section>
+
+  <!-- App -->
+  <div class="app" id="app" hidden>
+    <aside class="side">
+      <a class="brand side-brand" href="/">
+        <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="9" fill="#fff"/><path d="M9 25 17 8l8 17h-4.2L17 16.6 13.2 25Z" fill="#101B33"/><circle cx="26" cy="9" r="3.2" fill="#E5383B"/></svg>
+        <span>ألفا ميديا<small>لوحة التحكم</small></span>
+      </a>
+      <nav class="side-nav" aria-label="أقسام لوحة التحكم">
+        <button data-view="videos" class="active">فيديوهات القناة</button>
+        <button data-view="upload">رفع فيديو</button>
+        <button data-view="platforms">المنصات</button>
+        <button data-view="log">سجل النشر</button>
+        <button data-view="settings">الإعدادات</button>
+        <button data-view="guide">دليل الربط</button>
+      </nav>
+      <div class="side-status" id="sideStatus"><span class="tally"></span> <span>جارٍ الاتصال…</span></div>
+      <button class="side-logout" id="logout" type="button">تسجيل الخروج</button>
+    </aside>
+
+    <main class="main">
+      <!-- Videos -->
+      <section class="view" data-view="videos">
+        <header class="view-head">
+          <div>
+            <h1>فيديوهات القناة</h1>
+            <p id="channelLine">يتم جلب الفيديوهات من يوتيوب…</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" id="refreshVideos" type="button">تحديث القائمة</button>
+            <button class="btn btn-ink btn-sm" id="watchNow" type="button">افحص القناة وانشر الجديد</button>
+          </div>
+        </header>
+        <div class="rows" id="videoRows"></div>
+      </section>
+
+      <!-- Upload -->
+      <section class="view" data-view="upload" hidden>
+        <header class="view-head">
+          <div>
+            <h1>رفع فيديو</h1>
+            <p>ارفع الملف إلى قناة يوتيوب مباشرة ثم يُوزَّع على المنصات، أو شارك رابطًا جاهزًا.</p>
+          </div>
+        </header>
+        <div class="seg" role="tablist">
+          <button role="tab" aria-selected="true" data-mode="file">ملف من جهازك</button>
+          <button role="tab" aria-selected="false" data-mode="link">رابط فيديو</button>
+        </div>
+
+        <form class="panel form-grid" id="uploadForm">
+          <div class="mode-file">
+            <label class="drop" id="drop">
+              <input type="file" id="fileInput" accept="video/*" />
+              <strong id="dropTitle">اسحب الفيديو هنا أو اضغط للاختيار</strong>
+              <span id="dropMeta">MP4 أو MOV — يُرفع مباشرة من متصفحك إلى يوتيوب</span>
+            </label>
+            <p class="notice" id="googleNotice" hidden>لرفع الملفات إلى يوتيوب أضف <b>Google OAuth Client ID</b> من صفحة الإعدادات. التفاصيل في دليل الربط.</p>
+          </div>
+          <label class="field mode-link" hidden>
+            <span>رابط الفيديو</span>
+            <input type="url" id="linkUrl" placeholder="https://youtu.be/… أو رابط Google Drive / Dropbox" />
+          </label>
+          <label class="field">
+            <span>العنوان</span>
+            <input type="text" id="upTitle" maxlength="100" required />
+          </label>
+          <label class="field">
+            <span>الوصف</span>
+            <textarea id="upDesc" rows="4" maxlength="5000"></textarea>
+          </label>
+          <div class="field-row mode-file">
+            <label class="field">
+              <span>الظهور على يوتيوب</span>
+              <select id="upPrivacy">
+                <option value="public">عام</option>
+                <option value="unlisted">غير مدرج</option>
+                <option value="private">خاص</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>الوسوم (افصل بفاصلة)</span>
+              <input type="text" id="upTags" placeholder="Alpha Media, أخبار" />
+            </label>
+          </div>
+          <fieldset class="field">
+            <legend>انشر أيضًا على</legend>
+            <div class="checks" id="upTargets"></div>
+          </fieldset>
+          <div class="progress" id="upProgress" hidden><div></div><span></span></div>
+          <p class="form-error" id="upError" role="alert"></p>
+          <div class="form-actions">
+            <button class="btn btn-tally" type="submit" id="upSubmit">ارفع وانشر</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Platforms -->
+      <section class="view" data-view="platforms" hidden>
+        <header class="view-head">
+          <div>
+            <h1>المنصات</h1>
+            <p>كل صف هو منصة تستلم الفيديو. اترك رابط Webhook فارغًا لتستخدم رابط Zapier الرئيسي.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-tally btn-sm" id="savePlatforms" type="button">حفظ المنصات</button>
+          </div>
+        </header>
+
+        <div class="panel master">
+          <label class="field">
+            <span>رابط Zapier الرئيسي (Catch Hook)</span>
+            <input type="url" id="masterWebhook" placeholder="https://hooks.zapier.com/hooks/catch/…" />
+          </label>
+          <p class="hint">رابط واحد يستلم كل المنصات. داخل Zapier استخدم <b>Paths</b> على الحقل <code>platform_kind</code> لتوجيه كل فيديو إلى الصفحة الصحيحة.</p>
+        </div>
+
+        <div class="matrix" id="matrix"></div>
+
+        <div class="add-row">
+          <span>إضافة منصة:</span>
+          <button class="btn btn-ghost btn-sm" data-add="facebook" type="button">صفحة فيسبوك</button>
+          <button class="btn btn-ghost btn-sm" data-add="instagram" type="button">إنستاجرام</button>
+          <button class="btn btn-ghost btn-sm" data-add="tiktok" type="button">تيك توك</button>
+          <button class="btn btn-ghost btn-sm" data-add="linkedin" type="button">لينكد إن</button>
+          <button class="btn btn-ghost btn-sm" data-add="x" type="button">X</button>
+          <button class="btn btn-ghost btn-sm" data-add="custom" type="button">منصة أخرى (API / Webhook)</button>
+        </div>
+      </section>
+
+      <!-- Log -->
+      <section class="view" data-view="log" hidden>
+        <header class="view-head">
+          <div>
+            <h1>سجل النشر</h1>
+            <p id="logLine">آخر 200 عملية نشر.</p>
+          </div>
+          <div class="head-actions"><button class="btn btn-ghost btn-sm" id="refreshLog" type="button">تحديث</button></div>
+        </header>
+        <div class="rows" id="logRows"></div>
+      </section>
+
+      <!-- Settings -->
+      <section class="view" data-view="settings" hidden>
+        <header class="view-head">
+          <div><h1>الإعدادات</h1><p>تُحفظ على الخادم، فتظهر نفسها من أي جهاز تدخل منه.</p></div>
+          <div class="head-actions"><button class="btn btn-tally btn-sm" id="saveSettings" type="button">حفظ الإعدادات</button></div>
+        </header>
+        <form class="panel form-grid" id="settingsForm" onsubmit="return false">
+          <div class="field-row">
+            <label class="field"><span>معرّف القناة (Handle)</span><input type="text" id="sHandle" placeholder="@alphamedia-010" /></label>
+            <label class="field"><span>Channel ID (اختياري)</span><input type="text" id="sChannelId" placeholder="UC…" dir="ltr" /></label>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="sAuto" />
+            <span>انشر تلقائيًا أي فيديو جديد يظهر على القناة</span>
+          </label>
+          <label class="field">
+            <span>نص المنشور الافتراضي</span>
+            <textarea id="sCaption" rows="5"></textarea>
+            <small class="hint">المتغيرات المتاحة: <code>{title}</code> <code>{url}</code> <code>{description}</code></small>
+          </label>
+          <label class="field">
+            <span>Google OAuth Client ID (لرفع الفيديو إلى يوتيوب)</span>
+            <input type="text" id="sGoogle" dir="ltr" placeholder="xxxxxxxx.apps.googleusercontent.com" />
+          </label>
+        </form>
+      </section>
+
+      <!-- Guide -->
+      <section class="view guide" data-view="guide" hidden>
+        <header class="view-head"><div><h1>دليل الربط</h1><p>خطوات ربط المنصة بحساباتك مرة واحدة.</p></div></header>
+
+        <article class="panel">
+          <h2>ربط Zapier (فيسبوك، إنستاجرام، تيك توك، لينكد إن)</h2>
+          <ol>
+            <li>في Zapier أنشئ Zap جديدًا، واختر المشغّل <b>Webhooks by Zapier ← Catch Hook</b>، وانسخ الرابط.</li>
+            <li>الصق الرابط في <b>المنصات ← رابط Zapier الرئيسي</b> واحفظ، ثم اضغط <b>اختبار</b> على أي منصة ليصل مثال للبيانات.</li>
+            <li>أضف خطوة <b>Paths</b> بشرط <code>platform_kind</code> يساوي <code>facebook</code> أو <code>instagram</code> أو <code>tiktok</code> أو <code>linkedin</code>.</li>
+            <li>في كل مسار أضف إجراء النشر: <b>Facebook Pages ← Create Page Post</b> لصفحة Alpha Media، و<b>Instagram for Business</b>، و<b>TikTok</b>، و<b>LinkedIn ← Create Company Update</b>. استخدم <code>caption</code> للنص و<code>video_url</code> للرابط.</li>
+            <li>شغّل الـ Zap. من الآن أي فيديو جديد يُنشر وحده.</li>
+          </ol>
+          <p class="hint">تفضّل Zap منفصلًا لكل منصة؟ ضع رابط Catch Hook الخاص بها في خانة Webhook داخل صف المنصة.</p>
+        </article>
+
+        <article class="panel">
+          <h2>ربط n8n أو Make</h2>
+          <ol>
+            <li>في n8n أضف عقدة <b>Webhook</b> بطريقة <code>POST</code> وفعّل الـ workflow.</li>
+            <li>انسخ <b>Production URL</b> وضعه في خانة Webhook للمنصة، واختر نوع الربط n8n.</li>
+            <li>أضف بعدها عقدة <b>Switch</b> على <code>{{$json.body.platform_kind}}</code> ثم عقد النشر لكل منصة.</li>
+          </ol>
+          <p class="hint">أي خدمة أخرى تقبل طلب POST بصيغة JSON تعمل بنفس الطريقة. إذا كانت تتطلب مفتاح API ضعه في خانة «توكن»، ويُرسل كـ <code>Authorization: Bearer</code>.</p>
+        </article>
+
+        <article class="panel">
+          <h2>البيانات التي تصل إلى كل منصة</h2>
+          <pre dir="ltr" id="samplePayload"></pre>
+        </article>
+
+        <article class="panel">
+          <h2>تفعيل الرفع المباشر إلى يوتيوب</h2>
+          <ol>
+            <li>افتح <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud Console</a> وفعّل <b>YouTube Data API v3</b>.</li>
+            <li>من <b>APIs &amp; Services ← Credentials</b> أنشئ <b>OAuth client ID</b> من نوع <b>Web application</b>.</li>
+            <li>في <b>Authorized JavaScript origins</b> أضف رابط هذا الموقع: <code id="originHint"></code></li>
+            <li>في <b>OAuth consent screen</b> أضف بريد حساب القناة كمستخدم اختبار، ثم انسخ الـ Client ID إلى الإعدادات.</li>
+          </ol>
+        </article>
+      </section>
+
+      <footer class="dash-foot">
+        <span>Alpha Media Hub</span>
+        <span class="credit"><span>Project manager</span> Eng Ahmed Zahran</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Publish dialog -->
+  <dialog class="sheet" id="publishDialog">
+    <form method="dialog" id="publishForm">
+      <header>
+        <h2>نشر على المنصات</h2>
+        <button class="x" value="cancel" aria-label="إغلاق">×</button>
+      </header>
+      <div class="sheet-video" id="pubVideo"></div>
+      <fieldset class="field">
+        <legend>المنصات</legend>
+        <div class="checks" id="pubTargets"></div>
+      </fieldset>
+      <label class="field">
+        <span>نص المنشور</span>
+        <textarea id="pubCaption" rows="5"></textarea>
+      </label>
+      <p class="form-error" id="pubError" role="alert"></p>
+      <footer>
+        <button class="btn btn-ghost" value="cancel">إلغاء</button>
+        <button class="btn btn-tally" id="pubGo" value="default">انشر الآن</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="/dashboard.js" type="module"></script>
+</body>
+</html>

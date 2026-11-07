@@ -1,0 +1,14 @@
+{
+  "name": "alpha-media-hub",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Alpha Media — video publishing hub: YouTube import + multi-platform distribution via Zapier / n8n / webhooks",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "@netlify/functions": "^3.0.0"
+  }
+}
