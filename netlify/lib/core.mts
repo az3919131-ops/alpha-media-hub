@@ -99,9 +99,9 @@ export async function saveSeen(ids: string[]) {
 /* ---------- Auth ---------- */
 
 export function checkAdmin(req: Request): Response | null {
-  const key = Netlify.env.get("ADMIN_KEY");
+  const key = Netlify.env.get("ADMIN_KEY") || Netlify.env.get("ADMIN_PIN");
   if (!key) {
-    return json({ error: "ADMIN_KEY غير مضبوط في إعدادات Netlify. أضفه من Site configuration → Environment variables ثم أعد النشر." }, 503);
+    return json({ error: "ADMIN_PIN (أو ADMIN_KEY) غير مضبوط في إعدادات Netlify. أضفه من Site configuration → Environment variables ثم أعد النشر." }, 503);
   }
   const sent = req.headers.get("x-admin-key") ?? "";
   if (sent !== key) return json({ error: "مفتاح الدخول غير صحيح." }, 401);

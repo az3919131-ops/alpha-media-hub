@@ -24,12 +24,12 @@
       </a>
       <h1>الدخول إلى لوحة التحكم</h1>
       <label class="field">
-        <span>مفتاح الدخول</span>
-        <input type="password" id="gateKey" autocomplete="current-password" required />
+        <span>رمز الدخول (PIN)</span>
+        <input type="password" id="gateKey" inputmode="numeric" autocomplete="current-password" required />
       </label>
       <p class="form-error" id="gateError" role="alert"></p>
       <button class="btn btn-tally" type="submit">دخول</button>
-      <p class="hint">المفتاح هو قيمة <code>ADMIN_KEY</code> في إعدادات الموقع على Netlify. يُحفظ على هذا الجهاز فقط.</p>
+      <p class="hint">الرمز هو قيمة <code>ADMIN_PIN</code> في إعدادات الموقع على Netlify، ويُحفظ على هذا الجهاز فقط.</p>
       <p class="credit gate-credit"><span>Project manager</span> Eng Ahmed Zahran</p>
     </form>
   </section>
